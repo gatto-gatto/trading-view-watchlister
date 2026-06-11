@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <img src="icons/icon32.png" alt="" width="22" height="22" />
+    <h1>Watchlist Bulk Loader</h1>
+  </header>
+
+  <section class="block">
+    <div class="row between">
+      <label for="symbols">Symbols (one per line or comma-separated)</label>
+      <span id="count" class="muted">0</span>
+    </div>
+    <textarea id="symbols" rows="6" spellcheck="false"
+      placeholder="NSE:RELIANCE, NSE:ASIANPAINT, NSE:TCS&#10;or paste a whole Nifty 50 / Nifty 100 list…"></textarea>
+
+    <div class="row presets">
+      <span class="muted small">Fill:</span>
+      <button class="chip" data-preset="Nifty Top 30">Nifty Top 30</button>
+      <button class="chip" data-preset="Nifty 50">Nifty 50</button>
+      <button class="chip" data-preset="Nifty Next 50">Nifty Next 50</button>
+      <button class="chip ghost" id="clearText">Clear</button>
+    </div>
+
+    <div class="row presets" id="myLists"></div>
+
+    <div class="row save">
+      <input id="listName" type="text" placeholder="Name this list…" maxlength="24" />
+      <button class="chip" id="saveList">＋ Save current</button>
+    </div>
+
+    <div class="row options">
+      <label class="inline">Default exchange
+        <input id="exchange" type="text" value="NSE" size="5" />
+      </label>
+      <label class="inline">Page size
+        <input id="pageSize" type="number" value="30" min="1" max="100" />
+      </label>
+      <label class="inline check">
+        <input id="autoAdvance" type="checkbox" checked /> Auto-advance
+      </label>
+    </div>
+  </section>
+
+  <section class="block pager">
+    <div class="row between">
+      <button id="prev" class="nav">◀ Prev</button>
+      <span id="pageInfo" class="muted">Page 0 / 0</span>
+      <button id="next" class="nav">Next ▶</button>
+    </div>
+    <div id="pagePreview" class="preview muted small">—</div>
+  </section>
+
+  <button id="load" class="primary">Clear &amp; load this page</button>
+
+  <div id="status" class="status">Open a <b>TradingView</b> chart tab, then load a page.</div>
+  <progress id="bar" max="100" value="0" hidden></progress>
+
+  <footer class="muted small">
+    Tip: load 30 → review charts → click <b>Next ▶</b> → load again. Logs are in the page console (F12).
+  </footer>
+
+  <script src="presets.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
