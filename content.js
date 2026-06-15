@@ -366,34 +366,6 @@
     return input;
   }
 
-  async function addOne(symbol) {
-    let input = SEL.searchInput();
-    if (!input) input = await openSearch();
-    if (!input) return false;
-
-    input.focus();
-    setNativeValue(input, symbol);
-    // Wait for the results dropdown to populate, then commit the top match.
-    await waitFor(() => SEL.searchResults().length > 0, { timeout: 2500 });
-    await sleep(200);
-
-    const results = SEL.searchResults();
-    if (results.length) {
-      // Prefer an exact full-symbol match if present, else the first row.
-      const want = norm(symbol);
-      let target = results[0];
-      for (const r of results) {
-        const full = r.getAttribute("data-symbol-full") || r.getAttribute("data-symbol-short") || r.textContent;
-        if (norm(full) === want) { target = r; break; }
-      }
-      click(target);
-    } else {
-      pressEnter(input);
-    }
-    await sleep(250);
-    return true;
-  }
-
   // Paste the whole comma-separated list into the add box and commit once —
   // TradingView parses the commas and adds every symbol in a single action.
   async function addAllAtOnce(symbols, send) {
@@ -407,41 +379,27 @@
     return true;
   }
 
-  const matchedCount = (symbols) => {
-    const have = new Set(currentSymbols().map(norm));
-    return symbols.filter((s) => have.has(norm(s))).length;
-  };
-
   // ---- Orchestrate ---------------------------------------------------------
   async function run(symbols, send) {
     log("run", symbols);
     send(`Clearing current watchlist…`);
     const cleared = await clearWatchlist(send);
 
-    // Preferred: one-shot paste of the entire comma-separated list.
+    // One-shot paste of the entire comma-separated list — and nothing more.
+    // No per-symbol retries: if some don't land, we only report it in the console.
     await addAllAtOnce(symbols, send);
-    let matched = matchedCount(symbols);
-    log(`bulk paste landed ${matched}/${symbols.length}`);
-
-    // Fallback: add whatever didn't land, one at a time.
-    if (matched < symbols.length) {
-      const have = new Set(currentSymbols().map(norm));
-      const missing = symbols.filter((s) => !have.has(norm(s)));
-      send(`Adding ${missing.length} remaining individually…`);
-      let done = 0;
-      for (const sym of missing) {
-        try { await addOne(sym); } catch (e) { warn("add failed", sym, e); }
-        done++;
-        send(`Adding remaining ${done}/${missing.length}… (${sym})`, {
-          added: symbols.length - missing.length + done, total: symbols.length,
-        });
-      }
-      matched = matchedCount(symbols);
-    }
 
     pressEscape(SEL.searchInput() || document.body);
     await sleep(400);
-    log(`finished: ${matched}/${symbols.length} verified on watchlist`);
+
+    const have = new Set(currentSymbols().map(norm));
+    const matched = symbols.filter((s) => have.has(norm(s))).length;
+    if (matched < symbols.length) {
+      const missing = symbols.filter((s) => !have.has(norm(s)));
+      warn(`pasted ${matched}/${symbols.length}; ${missing.length} did NOT get added:`, missing.join(", "));
+    } else {
+      log(`pasted all ${symbols.length} symbols`);
+    }
     return { cleared, added: matched, total: symbols.length, matched };
   }
 

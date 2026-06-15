@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Paste a big list of symbols, auto-split into pages of 30, then one-click clear + load each page into your TradingView watchlist.",
   "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["https://*.tradingview.com/*"],
+  "host_permissions": ["https://*.tradingview.com/*", "https://kite.zerodha.com/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "TV Watchlist Bulk Loader",

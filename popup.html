@@ -26,11 +26,22 @@
       <button class="chip ghost" id="clearText">Clear</button>
     </div>
 
+    <div class="row">
+      <button class="chip" id="fetchKite">⬇ Fetch from Kite</button>
+      <span class="muted small">reads symbols from an open Kite tab</span>
+    </div>
+
     <div class="row presets" id="myLists"></div>
 
     <div class="row save">
       <input id="listName" type="text" placeholder="Name this list…" maxlength="24" />
       <button class="chip" id="saveList">＋ Save current</button>
+    </div>
+
+    <div class="row io">
+      <button class="chip ghost" id="exportLists">⭳ Export lists</button>
+      <button class="chip ghost" id="importLists">⭱ Import</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden />
     </div>
 
     <div class="row options">
@@ -46,6 +57,11 @@
     </div>
   </section>
 
+  <button id="load" class="primary">Clear &amp; load this page</button>
+
+  <div id="status" class="status">Open a <b>TradingView</b> chart tab, then load a page.</div>
+  <progress id="bar" max="100" value="0" hidden></progress>
+
   <section class="block pager">
     <div class="row between">
       <button id="prev" class="nav">◀ Prev</button>
@@ -54,11 +70,6 @@
     </div>
     <div id="pagePreview" class="preview muted small">—</div>
   </section>
-
-  <button id="load" class="primary">Clear &amp; load this page</button>
-
-  <div id="status" class="status">Open a <b>TradingView</b> chart tab, then load a page.</div>
-  <progress id="bar" max="100" value="0" hidden></progress>
 
   <footer class="muted small">
     Tip: load 30 → review charts → click <b>Next ▶</b> → load again. Logs are in the page console (F12).
